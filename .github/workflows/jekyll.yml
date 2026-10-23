@@ -11,7 +11,7 @@ on:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -37,10 +37,24 @@ jobs:
       - name: Enable GitHub Pages for this repository
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
         run: |
           if ! gh api "repos/${GITHUB_REPOSITORY}/pages" >/dev/null 2>&1; then
             gh api -X POST "repos/${GITHUB_REPOSITORY}/pages" -f build_type=workflow
           fi
+      - name: Record Pages setup diagnostic
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+        run: |
+          DIAGNOSTIC=$(gh api -X POST "repos/${GITHUB_REPOSITORY}/pages" -f build_type=workflow 2>&1)
+          TREE_SHA=$(gh api "repos/${GITHUB_REPOSITORY}/git/trees/${GITHUB_SHA}" --jq '.sha')
+          COMMIT_SHA=$(gh api -X POST "repos/${GITHUB_REPOSITORY}/git/commits" \
+            -f message="GitHub Pages setup diagnostic: ${DIAGNOSTIC}" \
+            -f tree="${TREE_SHA}" \
+            -F "parents[0]=${GITHUB_SHA}" --jq '.sha')
+          gh api -X PATCH "repos/${GITHUB_REPOSITORY}/git/refs/heads/pages-setup-debug" \
+            -f sha="${COMMIT_SHA}"
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6.0.0
       - name: Build with Jekyll
