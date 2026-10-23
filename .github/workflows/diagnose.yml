@@ -1,0 +1,32 @@
+name: Diagnose Pages setup
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe GitHub Pages API
+        id: get_probe
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          RESPONSE=$(gh api "repos/${GITHUB_REPOSITORY}/pages" 2>&1 || true)
+          RESPONSE=$(printf '%s' "$RESPONSE" | tr '\n' ' ' | cut -c 1-900)
+          echo "response=${RESPONSE}" >> "$GITHUB_OUTPUT"
+      - name: Probe Pages creation
+        id: post_probe
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          RESPONSE=$(gh api -X POST "repos/${GITHUB_REPOSITORY}/pages" -f build_type=workflow 2>&1 || true)
+          RESPONSE=$(printf '%s' "$RESPONSE" | tr '\n' ' ' | cut -c 1-900)
+          echo "response=${RESPONSE}" >> "$GITHUB_OUTPUT"
+      - name: "RESULT get=${{ steps.get_probe.outputs.response }} || post=${{ steps.post_probe.outputs.response }}"
+        run: exit 1
