@@ -1,3 +1,15 @@
+# LJT-Homepage
+
+Personal homepage for Junteng Liu, built with the [Academic Pages](https://github.com/academicpages/academicpages.github.io) template.
+
+## Deployment
+
+This repository is configured as a project page, served under `/LJT-Homepage`. The `Deploy Academic Pages template site to Pages` workflow builds the site on every push to `master`.
+
+To publish the site, open **Settings -> Pages** and select **GitHub Actions** as the build and deployment source. Until GitHub Pages is enabled for this repository, the workflow validates the Jekyll build and uploads the generated site as the `jekyll-site` artifact instead of deploying it. Once Pages is enabled, subsequent pushes deploy automatically.
+
+---
+
 # Academic Pages
 **Academic Pages is a GitHub Pages template for personal and professional portfolio-oriented websites.**
 
@@ -47,12 +59,12 @@ When you are initially working on your website, it is very useful to be able to 
     ```
 1. Run `bundle install` to install ruby dependencies. If you get errors, delete Gemfile.lock and try again.
 
-    If you see file permission error like `Fetching bundler-2.6.3.gem ERROR:  While executing gem (Gem::FilePermissionError) You don't have write permissions for the /var/lib/gems/3.2.0 directory.` or `Bundler::PermissionError: There was an error while trying to write to /usr/local/bin.`
+    If you see file permission error like `Fetching bundler-2.6.3.gem ERROR:  While executing gem (Gem::FilePermissionError) You don't have write permissions to /var/lib/gems/3.2.0 directory.` or `Bundler::PermissionError: There was an error while trying to write to /usr/local/bin.`
     Install Gems Locally (Recommended):
     ```bash
     bundle config set --local path 'vendor/bundle'
     ```
-    then try run `bundle install` again. If succeeded, you should see a folder called `vendor` and `.bundle`.
+    then try run `sudo apt install ruby-dev ruby-bundler nodejs` again. If succeeded, you should see a folder called `vendor` and `.bundle`.
 
 1. Run `jekyll serve -l -H localhost` to generate the HTML and serve it from `localhost:4000` the local server will automatically rebuild and refresh the pages on change to Markdown (*.md) and HTML files, while changes to the core template and configuration (i.e., `_config.yml`) will require stopping and restarting Jekyll.
     You may also try `bundle exec jekyll serve -l -H localhost` to ensure jekyll to use specific dependencies on your own local machine.
