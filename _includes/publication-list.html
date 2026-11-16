@@ -1,0 +1,15 @@
+{% assign years = "2025,2024,2023" | split: "," %}
+{% for year in years %}
+<h3 id="publications-{{ year }}">{{ year }}</h3>
+<ul class="publications">
+  {% for publication in site.data.publications %}
+    {% if publication.year == year %}
+    <li>
+      <strong>{{ publication.title }}</strong><br />
+      {% for author in publication.authors %}{% if author == "Junteng Liu" %}<strong>{{ author }}</strong>{% else %}{{ author }}{% endif %}{% unless forloop.last %}, {% endunless %}{% endfor %}<br />
+      <em>{{ publication.venue }}</em>, {{ publication.year }}
+    </li>
+    {% endif %}
+  {% endfor %}
+</ul>
+{% endfor %}
